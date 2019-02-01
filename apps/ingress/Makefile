@@ -13,6 +13,8 @@
 # limitations under the License.
 BASEDIR = $(shell pwd)
 
+INGRESS_URL="`kubectl get service ingress-nginx -n ingress-nginx -o json | jq --raw-output ".status.loadBalancer.ingress[0].hostname"`"
+
 include ../../Makefile.properties
 
 deploy: env creds
@@ -21,8 +23,10 @@ deploy: env creds
 deploy.minikube:
 	kubectl apply -f "$(BASEDIR)/ingress.minikube.yaml"
 
-deploy.generic:
-	kubectl apply -f "$(BASEDIR)/ingress.generic.yaml"	
+deploy.generic: 
+	test -n "$(INGRESS_URL)" # No ingress url detected? $$INGRESS_URL
+	sed -i '' "s/INGRESS_ENDPOINT_HERE/${INGRESS_URL}/g" "$(BASEDIR)/ingress.generic.yaml"
+	kubectl apply -f "$(BASEDIR)/ingress.generic.yaml"
 
 config: env
 	@echo Creating INGRESS Yaml files based on samples and setting in your Makefile.properties
@@ -35,7 +39,9 @@ clean: env creds
 clean.minikube:
 	-kubectl delete -f "$(BASEDIR)/ingress.minikube.yaml"
 
-clean.generic:
+clean.generic: 
+	test -n "$(INGRESS_URL)" # No ingress url detected? $$INGRESS_URL
+	sed -i '' "s/${INGRESS_URL}/INGRESS_ENDPOINT_HERE/g" "$(BASEDIR)/ingress.generic.yaml"
 	-kubectl delete -f "$(BASEDIR)/ingress.generic.yaml"
 
 define rewritefile

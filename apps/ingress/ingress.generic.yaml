@@ -4,7 +4,7 @@ metadata:
   name: wap-ingress
 spec:
   rules:
-  - host: wap.devops.com
+  - host: INGRESS_ENDPOINT_HERE
     http:
       paths:
       - path: /api
