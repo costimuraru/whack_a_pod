@@ -120,7 +120,7 @@ sure you set `$(DOCKERREPO)` to the right value in Makefile.properties.
 #### Docker Repository with DockerHub 
 Alternatively, to host your images on DockerHub,
 
-1. Create an account on DockerHub
+1. Create an account on [DockerHub](https://hub.docker.com/)
 2. Create an image repository on DockerHub
 3. In the `Makefile.properties`, change the value of `PROJECT` so that it equals your image repository slug
 4. In the `Makefile.properties`, change the value of `DOCKERREPO` so that it looks like `yourusername/$(PROJECT)`

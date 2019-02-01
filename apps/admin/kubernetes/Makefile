@@ -21,9 +21,9 @@ reset: clean.deployment app
 
 reset.safe: 
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o "$(BASEDIR)/../containers/main" "$(BASEDIR)/../containers/main.go" "$(BASEDIR)/../containers/kubernetes.go"
-	gcloud container builds submit "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO)/admin
+	gcloud container builds submit "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO):admin
 	-kubectl delete deployment admin-deployment
-	-kubectl run admin-deployment --image=$(DOCKERREPO)/admin --replicas=1 --port=8080 --labels=app=admin --env="APIIMAGE=$(DOCKERREPO)/api"
+	-kubectl run admin-deployment --image=$(DOCKERREPO):admin --replicas=1 --port=8080 --labels=app=admin --env="APIIMAGE=$(DOCKERREPO):api"
 	say "app refresh complete"		
 
 app: build deploy
@@ -33,15 +33,15 @@ main:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o "$(BASEDIR)/../containers/main" "$(BASEDIR)/../containers/main.go" "$(BASEDIR)/../containers/kubernetes.go"	
 
 build: env main
-	gcloud container builds submit "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO)/admin
+	gcloud container builds submit "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO):admin
 
 build.dockerhub: main
 	docker build "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO):admin
 	docker push $(DOCKERREPO):admin
 
 build.generic: main
-	docker build "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO)/whackapod-admin
-	docker push $(DOCKERREPO)/whackapod-admin
+	docker build "$(BASEDIR)/../containers/." --tag=$(DOCKERREPO):admin
+	docker push $(DOCKERREPO):admin
 
 deploy: env creds deployment service
 
@@ -55,17 +55,17 @@ deploy.minikube.dockerhub:
 	kubectl set serviceaccount deployment admin-deployment wap-admin
 
 deploy.generic:
-	kubectl run admin-deployment --image=$(DOCKERREPO)/whackapod-admin --replicas=1 --port=8080 --labels=app=admin --env="APIIMAGE=$(DOCKERREPO)/whackapod-api"
+	kubectl run admin-deployment --image=$(DOCKERREPO):admin --replicas=1 --port=8080 --labels=app=admin --env="APIIMAGE=$(DOCKERREPO):api"
 	kubectl expose deployment admin-deployment --name=admin --target-port=8080  --type=NodePort --labels="app=admin"
 	kubectl create serviceaccount wap-admin	
-	kubectl create clusterrolebinding wap-admin --clusterrole=cluster-admin --serviceaccount=$$(kubectl config view -o jsonpath="{.contexts[?(@.name==\"$$(kubectl config current-context)\")].context.namespace}"):wap-admin
+	kubectl create clusterrolebinding wap-admin --clusterrole=cluster-admin --serviceaccount=default:wap-admin
 	kubectl set serviceaccount deployment admin-deployment wap-admin
 
 test: 
 	cd 	"$(BASEDIR)/../containers" && go test
 
 deployment:
-	kubectl run admin-deployment --image=$(DOCKERREPO)/admin --replicas=1 --port=8080 --labels=app=admin --env="APIIMAGE=$(DOCKERREPO)/api"
+	kubectl run admin-deployment --image=$(DOCKERREPO):admin --replicas=1 --port=8080 --labels=app=admin --env="APIIMAGE=$(DOCKERREPO):api"
 
 service:
 	kubectl expose deployment admin-deployment --name=admin --target-port=8080  --type=NodePort --labels="app=admin"
