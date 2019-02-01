@@ -120,7 +120,7 @@ sure you set `$(DOCKERREPO)` to the right value in Makefile.properties.
 #### Docker Repository with DockerHub 
 Alternatively, to host your images on DockerHub,
 
-1. Create an account on DockerHub
+1. Create an account on [DockerHub](https://hub.docker.com/)
 2. Create an image repository on DockerHub
 3. In the `Makefile.properties`, change the value of `PROJECT` so that it equals your image repository slug
 4. In the `Makefile.properties`, change the value of `DOCKERREPO` so that it looks like `yourusername/$(PROJECT)`
@@ -164,12 +164,6 @@ This method is for generic usage and can be run on any Kubernetes installation. 
 * It's agnostic of any loadbalancer in front of ingress so you can use `NodePort` type for ingress service
 * It works with RBAC model - proper serviceaccount and role bindings are created
 * It will deploy all objects in current namespace
-
-1. Open a terminal in root of whack_a_pod location.
-1. Build application with `make build.generic` **OR** skip building by setting `DOCKERREPO` to **cloudowski** and use prebuilt images availabe on dockerhub
-1. Run `make deploy.generic`
-1. Define name `whackapod.example.com` in your `/etc/hosts` pointing to IP address of your load balancer in front of ingress controller or one of nodes IP (when using `NodePort`)
-1. Open your browser at [http://whackapod.example.com/](http://whackapod.example.com)
 
 ### Clean generic deployment
 1. Run `make clean.generic`
