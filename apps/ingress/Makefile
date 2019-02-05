@@ -13,7 +13,7 @@
 # limitations under the License.
 BASEDIR = $(shell pwd)
 
-INGRESS_URL="`kubectl get service ingress-nginx -n ingress-nginx -o json | jq --raw-output ".status.loadBalancer.ingress[0].hostname"`"
+INGRESS_URL=“`kubectl get service nginx-ingress-controller -n nginx-ingress -o json | jq --raw-output ".status.loadBalancer.ingress[0].hostname"`”
 
 include ../../Makefile.properties
 
