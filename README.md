@@ -165,12 +165,6 @@ This method is for generic usage and can be run on any Kubernetes installation. 
 * It works with RBAC model - proper serviceaccount and role bindings are created
 * It will deploy all objects in current namespace
 
-1. Open a terminal in root of whack_a_pod location.
-1. Build application with `make build.generic` **OR** skip building by setting `DOCKERREPO` to **cloudowski** and use prebuilt images availabe on dockerhub
-1. Run `make deploy.generic`
-1. Define name `whackapod.example.com` in your `/etc/hosts` pointing to IP address of your load balancer in front of ingress controller or one of nodes IP (when using `NodePort`)
-1. Open your browser at [http://whackapod.example.com/](http://whackapod.example.com)
-
 ### Clean generic deployment
 1. Run `make clean.generic`
 
